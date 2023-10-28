@@ -20,7 +20,7 @@ dp.shutdown.register(stop_bot)
 # F is magical filter used in aiogram3
 dp.message.register(get_photo, F.photo)
 dp.message.register(get_hello, F.text.lower() == 'привет')
-dp.message.register(get_true_contact,  F.content_type == ContentType.CONTACT, IsTrueContact())
+dp.message.register(get_true_contact,  F.content_type == ContentType.CONTACT & IsTrueContact())
 dp.message.register(get_fake_contact, F.content_type == ContentType.CONTACT)
     
 async def start():
