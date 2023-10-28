@@ -13,3 +13,11 @@ async def start_bot(bot: Bot):
     
 async def stop_bot(bot: Bot):
     await bot.send_message(settings.bots.bot_owner_id, text="Бот остановлен")
+
+async def get_photo(message: types.Message, bot: Bot):
+    await message.answer(f"Ты отправил картинку сохраню её себе")
+    file = await bot.get_file(message.photo[-1].file_id)
+    await bot.download_file(file.file_path, 'photo.jpg')
+
+async def get_hello(message:types.Message, bot: Bot):
+    await message.answer(f"И тебе привет")
