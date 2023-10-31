@@ -1,11 +1,12 @@
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher, F
-from aiogram.filters import Command
 from core.settings import settings
 from core.handlers.basic import start_bot, stop_bot, get_start, get_photo, get_hello
 from core.handlers.contact import get_true_contact, get_fake_contact
 from core.filters.iscontact import IsTrueContact
+from core.utils.commands import set_commands
+from aiogram import Bot, Dispatcher, F
+from aiogram.filters import Command
 from aiogram.enums import ContentType
 
 logging.basicConfig(level=logging.INFO, 
@@ -22,9 +23,10 @@ dp.message.register(get_photo, F.photo)
 dp.message.register(get_hello, F.text.lower() == 'привет')
 dp.message.register(get_true_contact,  F.content_type == ContentType.CONTACT, IsTrueContact())
 dp.message.register(get_fake_contact, F.content_type == ContentType.CONTACT)
-    
+
 async def start():
      # init
+    await set_commands(bot)
     try:
         await dp.start_polling(bot)
     finally:
