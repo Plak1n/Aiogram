@@ -1,19 +1,21 @@
 import asyncio
 import logging
 from core.settings import settings
-from core.handlers.basic import start_bot, stop_bot, get_start, get_photo, get_hello
+from core.handlers.basic import start_bot, stop_bot, get_start, get_photo, get_hello, get_location
 from core.handlers.contact import get_true_contact, get_fake_contact
 from core.filters.iscontact import IsTrueContact
 from core.utils.commands import set_commands
 from aiogram import Bot, Dispatcher, F
+from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram.enums import ContentType
 
 logging.basicConfig(level=logging.INFO, 
                     format="%(asctime)s - [%(levelname)s] - %(name)s - "
                     "%(filename)s.%(funcName)s(%(lineno)d) - %(message)s")
+
 bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
-    
+
 dp = Dispatcher()
 dp.message.register(get_start, Command(commands=['start']))
 dp.startup.register(start_bot)
@@ -23,6 +25,12 @@ dp.message.register(get_photo, F.photo)
 dp.message.register(get_hello, F.text.lower() == 'привет')
 dp.message.register(get_true_contact,  F.content_type == ContentType.CONTACT, IsTrueContact())
 dp.message.register(get_fake_contact, F.content_type == ContentType.CONTACT)
+dp.message.register(get_location, F.content_type == ContentType.LOCATION)
+
+#another way to register handlers  
+@dp.message(Command("help"))
+async def help(message: Message):
+    await message.answer("Я проверяю функции и возможности библиотеки aiogram и telegram")
 
 async def start():
      # init
