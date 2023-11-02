@@ -37,7 +37,7 @@ dp.callback_query.register(select_macbook_callback, F.data.startswith('apple_'))
 async def help(message: Message):
     await message.answer("Я проверяю функции и возможности библиотеки aiogram и telegram")
 
-@dp.callback_query(CallBackInfo.filter())
+@dp.callback_query(CallBackInfo.filter(F.name== 'button'))
 async def callback_query(call: CallbackQuery, bot: Bot, callback_data: CallBackInfo):
     # print(call.message)
     await call.message.answer(f"Была нажата инлайн кнопка. Это callback с использование своего класса callbackdata {callback_data}")
