@@ -7,9 +7,10 @@ from aiogram.enums import ContentType
 from core.settings import settings
 from core.handlers.basic import start_bot, stop_bot, get_start, get_photo, get_hello, get_location, get_inline
 from core.handlers.contact import get_true_contact, get_fake_contact
-from core.handlers.callback_data import select_macbook_callback, callback_query
+from core.handlers.callback import select_macbook_callback, callback_query
 from core.filters.iscontact import IsTrueContact
 from core.utils.commands import set_commands
+from core.utils.callback_data import CallBackInfo
 
 
 logging.basicConfig(level=logging.INFO, 
@@ -36,11 +37,10 @@ dp.callback_query.register(select_macbook_callback, F.data.startswith('apple_'))
 async def help(message: Message):
     await message.answer("Я проверяю функции и возможности библиотеки aiogram и telegram")
 
-@dp.callback_query()
-async def callback_query(call: CallbackQuery, bot: Bot):
-    print(call.message)
-    print(f"\n\n{call.data}")
-    await call.message.answer(f"Была нажата инлайн кнопка {call.message.text}")
+@dp.callback_query(CallBackInfo.filter())
+async def callback_query(call: CallbackQuery, bot: Bot, callback_data: CallBackInfo):
+    # print(call.message)
+    await call.message.answer(f"Была нажата инлайн кнопка. Это callback с использование своего класса callbackdata {callback_data}")
     await call.answer()
 
 async def start():

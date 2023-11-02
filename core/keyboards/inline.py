@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
+from core.utils.callback_data import CallBackInfo
 
 select_macbook = InlineKeyboardMarkup(inline_keyboard=[
     [
@@ -36,9 +37,9 @@ select_macbook = InlineKeyboardMarkup(inline_keyboard=[
 
 def get_inline_keyboard()-> InlineKeyboardMarkup:
     keyborad_builder = InlineKeyboardBuilder()
-    keyborad_builder.button(text="Button1",callback_data="button_1")
-    keyborad_builder.button(text="Button2", callback_data="button2")
-    keyborad_builder.button(text="Button3", callback_data="button3")
+    keyborad_builder.button(text="Button1",callback_data=CallBackInfo(name="button",number=1))
+    keyborad_builder.button(text="Button2", callback_data=CallBackInfo(name="button",number=2))
+    keyborad_builder.button(text="Button3", callback_data=CallBackInfo(name="button",number=3))
     keyborad_builder.button(text="Button4(link)", url="youtube.com")
     keyborad_builder.button(text="Button5(profile)", url="tg://user?id=6200739572")
     keyborad_builder.adjust(1,1,2)
