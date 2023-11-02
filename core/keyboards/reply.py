@@ -1,7 +1,7 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, KeyboardButtonPollType
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, KeyboardButtonPollType
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-test_keyboard_func  = ReplyKeyboardMarkup(keyboard=[
+test_keyboard_func = ReplyKeyboardMarkup(keyboard=[
     [
         KeyboardButton(
             text="Ряд 1. Кнопка 1"

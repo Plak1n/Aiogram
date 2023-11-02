@@ -2,11 +2,15 @@ from aiogram import Bot
 from aiogram.types import Message
 from core.settings import settings
 from core.keyboards.reply import reply_keyboard, get_reply_keyboard
+from core.keyboards.inline import select_macbook, get_inline_keyboard
+
+async def get_inline(message: Message, bot:Bot):
+    await message.answer(f"Привет {message.from_user.first_name}. Показываю инлайн клавиатуру", reply_markup=select_macbook)
 
 async def get_start(message: Message, bot: Bot):
     await bot.send_message(message.from_user.id, f"<b>Привет {message.from_user.first_name} Я тестовый бот написанный на aiogram</b>")
     # Aiogram helpfull methods
-    await message.answer(f"<s>Привет {message.from_user.first_name}</s>")
+    await message.answer(f"<s>Привет {message.from_user.first_name}</s>", reply_markup=get_inline_keyboard())
     await message.reply(f"<tg-spoiler>Привет {message.from_user.first_name}</tg-spoiler>", reply_markup=reply_keyboard)
     
 async def start_bot(bot: Bot):
