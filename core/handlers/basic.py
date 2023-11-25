@@ -30,3 +30,6 @@ async def get_hello(message: Message, bot: Bot):
 async def get_location(message: Message, bot: Bot):
     await message.answer(f"Ты отправил локацию \r\a"
                          f"{message.location.latitude}\r\n{message.location.longitude}")
+    
+async def owner_messsage(message: Message, bot: Bot):
+    await message.answer(f"Это сообщение только для создателя бота")
