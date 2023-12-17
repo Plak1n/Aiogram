@@ -20,25 +20,25 @@ logging.basicConfig(level=logging.INFO,
 bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
 
 dp = Dispatcher()
-dp.message.register(get_start, Command(commands=['start']))
+dp.message.register(get_start, Command(commands=["start"]))
 dp.startup.register(start_bot)
 dp.shutdown.register(stop_bot)
 # F is magical filter used in aiogram3
 dp.message.register(get_photo, F.photo)
-dp.message.register(get_hello, F.text.lower() == 'привет')
+dp.message.register(get_hello, F.text.lower() == "привет")
 dp.message.register(get_true_contact,  F.content_type == ContentType.CONTACT, IsTrueContact())
 dp.message.register(get_fake_contact, F.content_type == ContentType.CONTACT)
 dp.message.register(get_location, F.content_type == ContentType.LOCATION)
 dp.message.register(get_inline, Command("inline"))
-dp.message.register(owner_messsage, F.text.lower() == 'админ', IsOwner())
-dp.callback_query.register(select_macbook_callback, F.data.startswith('apple_'))
+dp.message.register(owner_messsage, F.text.lower() == "админ", IsOwner())
+dp.callback_query.register(select_macbook_callback, F.data.startswith("apple_"))
 
 #another way to register handlers  
 @dp.message(Command("help"))
 async def help(message: Message):
     await message.answer("Я проверяю функции и возможности библиотеки aiogram и telegram")
 
-@dp.callback_query(CallBackInfo.filter(F.name== 'button'))
+@dp.callback_query(CallBackInfo.filter(F.name== "button"))
 async def callback_query(call: CallbackQuery, bot: Bot, callback_data: CallBackInfo):
     # print(call.message)
     await call.message.answer(f"Была нажата инлайн кнопка. Это callback с использование своего класса callbackdata {callback_data}")
