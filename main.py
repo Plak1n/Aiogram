@@ -8,6 +8,7 @@ from core.settings import settings
 from core.handlers.basic import start_bot, stop_bot, get_start, get_photo, get_hello, get_location, get_inline, owner_messsage
 from core.handlers.contact import get_true_contact, get_fake_contact
 from core.handlers.callback import select_macbook_callback, callback_query
+from core.handlers.payments import order, pre_checkout_query, successful_payment
 from core.filters.iscontact import IsTrueContact, IsOwner
 from core.utils.commands import set_commands
 from core.utils.callback_data import CallBackInfo
@@ -31,7 +32,10 @@ dp.message.register(get_fake_contact, F.content_type == ContentType.CONTACT)
 dp.message.register(get_location, F.content_type == ContentType.LOCATION)
 dp.message.register(get_inline, Command("inline"))
 dp.message.register(owner_messsage, F.text.lower() == "админ", IsOwner())
+dp.message.register(order, Command(commands="pay"))
+dp.message.register(successful_payment, F.content_type == ContentType.SUCCESSFUL_PAYMENT)
 dp.callback_query.register(select_macbook_callback, F.data.startswith("apple_"))
+dp.pre_checkout_query.register(pre_checkout_query)
 
 #another way to register handlers  
 @dp.message(Command("help"))

@@ -22,6 +22,10 @@ async def set_commands(bot: Bot):
         BotCommand(
             command="inline",
             description="Получение инлайн клавиатуры"
+        ),
+        BotCommand(
+            command="pay",
+            description="Купить продукт"
         )
     ]
     

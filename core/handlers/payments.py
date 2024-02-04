@@ -1,5 +1,5 @@
 from aiogram import Bot
-from aiogram.types import Message, LabeledPrice
+from aiogram.types import Message, LabeledPrice, PreCheckoutQuery
 
 async def order(messsage: Message, bot: Bot):
     await bot.send_invoice(
@@ -8,28 +8,28 @@ async def order(messsage: Message, bot: Bot):
         description="тестовое описание", # 256 chars
         payload="Testing payment capabilities", # internal information. User dont see it. Example using: collect data of payments
         provider_token="381764678:TEST:72488",
-        currency="BYN",
+        currency="rub",
         prices= [
             LabeledPrice(
                 label="Подписка на группу",
-                amount=1000
+                amount=10000
             ),
             LabeledPrice(
                 label="НДС",
-                amount=200
+                amount=2000
             ),
             LabeledPrice(
-                label="Скидка",
-                amount= -200
+                label="Скидка", 
+                amount= -2000
             ),
             LabeledPrice(
                 label="Бонус",
-                amount=-100
+                amount=-1000
             )
         ],
-        max_tip_amount=500,
-        suggested_tip_amounts=[100,200,300,400],
-        start_parameter='plak1n_payments',
+        max_tip_amount=5000,
+        suggested_tip_amounts=[1000,2000,3000,4000],
+        start_parameter="plak1n_payments",
         # If left empty, forwarded copies of the sent message will have a Pay button,
         # allowing multiple users to pay directly from the forwarded message
         provider_data=None, # data to provider
@@ -41,15 +41,24 @@ async def order(messsage: Message, bot: Bot):
         need_email=True,
         need_phone_number=True,
         need_shipping_address=False, # to deliver
-        send_phone_number_to_provider=False, # if providerasks
-        send_email_to_provider=True,
-        is_flexible=False, 
+        send_phone_number_to_provider=False, # if provider asks
+        send_email_to_provider=True,    
+        is_flexible=False, # if final price depends on delivery
         disable_notification=False,
         protect_content=False, # protection from copying, forwarding, 
         reply_to_message_id=None,
         allow_sending_without_reply=True,
         reply_markup=None,
-        request_timeout=15,
-        
+        request_timeout=15
     )
-    
+
+
+async def pre_checkout_query(pre_checkout_query: PreCheckoutQuery, bot: Bot):
+    await bot.answer_pre_checkout_query(pre_checkout_query.id, ok=True)
+
+
+async def successful_payment(message: Message):
+    msg = f"Спасибо за оплату {message.successful_payment.total_amount / 100} {message.successful_payment.currency}." \
+          f"\r\nНаш менеджер получил заявку и уже набирает ваш номер телефона" \
+          f"\r\nПока вы можете скачать цифровую версию нашего продукта https://test_link.by"
+    await message.answer(msg)
