@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import asyncpg
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
@@ -12,31 +13,12 @@ from core.handlers.payments import order, pre_checkout_query, successful_payment
 from core.filters.iscontact import IsTrueContact, IsOwner
 from core.utils.commands import set_commands
 from core.utils.callback_data import CallBackInfo
+from core.middlewares.counter_middleware import CounterMiddleware
+from core.middlewares.office_hours import OfficeHoursMiddleware
+from core.middlewares.db_middleware import DbSession
 
-
-logging.basicConfig(level=logging.INFO, 
-                    format="%(asctime)s - [%(levelname)s] - %(name)s - "
-                    "%(filename)s.%(funcName)s(%(lineno)d) - %(message)s")
-
-bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
 
 dp = Dispatcher()
-dp.message.register(get_start, Command(commands=["start"]))
-dp.startup.register(start_bot)
-dp.shutdown.register(stop_bot)
-# F is magical filter used in aiogram3
-dp.message.register(get_photo, F.photo)
-dp.message.register(get_hello, F.text.lower() == "привет")
-dp.message.register(get_true_contact,  F.content_type == ContentType.CONTACT, IsTrueContact())
-dp.message.register(get_fake_contact, F.content_type == ContentType.CONTACT)
-dp.message.register(get_location, F.content_type == ContentType.LOCATION)
-dp.message.register(get_inline, Command("inline"))
-dp.message.register(owner_messsage, F.text.lower() == "админ", IsOwner())
-dp.shipping_query.register(shipping_check)
-dp.message.register(order, Command(commands="pay"))
-dp.message.register(successful_payment, F.content_type == ContentType.SUCCESSFUL_PAYMENT)
-dp.callback_query.register(select_macbook_callback, F.data.startswith("apple_"))
-dp.pre_checkout_query.register(pre_checkout_query)
 
 #another way to register handlers  
 @dp.message(Command("help"))
@@ -49,8 +31,39 @@ async def callback_query(call: CallbackQuery, bot: Bot, callback_data: CallBackI
     await call.message.answer(f"Была нажата инлайн кнопка. Это callback с использование своего класса callbackdata {callback_data}")
     await call.answer()
 
+async def create_pool():
+    return await asyncpg.create_pool(user="plak1n", password="Danko560x9z", database='users_aiogram',host="127.0.0.1", port=5432, command_timeout=60)
+
 async def start():
-     # init
+    # init
+    logging.basicConfig(level=logging.INFO, 
+                    format="%(asctime)s - [%(levelname)s] - %(name)s - "
+                    "%(filename)s.%(funcName)s(%(lineno)d) - %(message)s")
+
+    bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
+    pool_connect = await create_pool()
+    dp.update.middleware.register(DbSession(pool_connect))
+    
+    # You need register middleware before handlers
+    dp.message.middleware.register(CounterMiddleware())
+    dp.update.middleware.register(OfficeHoursMiddleware())
+    dp.message.register(get_start, Command(commands=["start"]))
+    dp.startup.register(start_bot)
+    dp.shutdown.register(stop_bot)
+    # F is magical filter used in aiogram3
+    dp.message.register(get_photo, F.photo)
+    dp.message.register(get_hello, F.text.lower() == "привет")
+    dp.message.register(get_true_contact,  F.content_type == ContentType.CONTACT, IsTrueContact())
+    dp.message.register(get_fake_contact, F.content_type == ContentType.CONTACT)
+    dp.message.register(get_location, F.content_type == ContentType.LOCATION)
+    dp.message.register(get_inline, Command("inline"))
+    dp.message.register(owner_messsage, F.text.lower() == "админ", IsOwner())
+    dp.shipping_query.register(shipping_check)
+    dp.message.register(order, Command(commands="pay"))
+    dp.message.register(successful_payment, F.content_type == ContentType.SUCCESSFUL_PAYMENT)
+    dp.callback_query.register(select_macbook_callback, F.data.startswith("apple_"))
+    dp.pre_checkout_query.register(pre_checkout_query)
+
     await set_commands(bot)
     try:
         await dp.start_polling(bot)

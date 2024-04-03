@@ -3,11 +3,14 @@ from aiogram.types import Message
 from core.settings import settings
 from core.keyboards.reply import reply_keyboard, get_reply_keyboard
 from core.keyboards.inline import select_macbook, get_inline_keyboard
+from core.utils.db_connect import Request
 
 async def get_inline(message: Message, bot:Bot):
     await message.answer(f"Привет {message.from_user.first_name}. Показываю инлайн клавиатуру", reply_markup=select_macbook)
 
-async def get_start(message: Message, bot: Bot):
+async def get_start(message: Message, bot: Bot, counter: str, request: Request):
+    await request.add_data(message.from_user.id, message.from_user.first_name)
+    await message.answer(f"Cообщение №{counter}")
     await bot.send_message(message.from_user.id, f"<b>Привет {message.from_user.first_name} Я тестовый бот написанный на aiogram</b>")
     # Aiogram helpfull methods
     await message.answer(f"<s>Привет {message.from_user.first_name}</s>", reply_markup=get_inline_keyboard())
