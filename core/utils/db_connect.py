@@ -1,7 +1,7 @@
-import asyncpg
+import psycopg_pool
 
 class Request:
-    def __init__(self, connector: asyncpg.pool.Pool):
+    def __init__(self, connector: psycopg_pool.AsyncConnectionPool.connection):
         self.connector = connector
     
     async def add_data(self, user_id, user_name):

@@ -1,6 +1,6 @@
 import asyncio
 import logging
-import asyncpg
+import psycopg_pool
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
@@ -17,6 +17,7 @@ from core.middlewares.counter_middleware import CounterMiddleware
 from core.middlewares.office_hours import OfficeHoursMiddleware
 from core.middlewares.db_middleware import DbSession
 
+asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 dp = Dispatcher()
 
@@ -31,8 +32,9 @@ async def callback_query(call: CallbackQuery, bot: Bot, callback_data: CallBackI
     await call.message.answer(f"Была нажата инлайн кнопка. Это callback с использование своего класса callbackdata {callback_data}")
     await call.answer()
 
-async def create_pool():
-    return await asyncpg.create_pool(user="plak1n", password="Danko560x9z", database='users_aiogram',host="127.0.0.1", port=5432, command_timeout=60)
+def create_pool():
+    return psycopg_pool.AsyncConnectionPool(f"host=127.0.0.1 port=5432 dbname=users_aiogram user=plak1n password=Danko560x9z "
+                                                  f"connect_timeout=60")
 
 async def start():
     # init
@@ -41,7 +43,7 @@ async def start():
                     "%(filename)s.%(funcName)s(%(lineno)d) - %(message)s")
 
     bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
-    pool_connect = await create_pool()
+    pool_connect = create_pool()
     dp.update.middleware.register(DbSession(pool_connect))
     
     # You need register middleware before handlers
