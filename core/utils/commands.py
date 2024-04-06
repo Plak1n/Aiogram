@@ -26,6 +26,10 @@ async def set_commands(bot: Bot):
         BotCommand(
             command="pay",
             description="Купить продукт"
+        ),
+        BotCommand(
+            command="form",
+            description="Начать опрос"
         )
     ]
     

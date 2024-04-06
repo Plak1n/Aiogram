@@ -10,7 +10,9 @@ from core.handlers.basic import start_bot, stop_bot, get_start, get_photo, get_h
 from core.handlers.contact import get_true_contact, get_fake_contact
 from core.handlers.callback import select_macbook_callback, callback_query
 from core.handlers.payments import order, pre_checkout_query, successful_payment, shipping_check
+from core.handlers import form
 from core.filters.iscontact import IsTrueContact, IsOwner
+from core.utils.states_form import StepsForm
 from core.utils.commands import set_commands
 from core.utils.callback_data import CallBackInfo
 from core.middlewares.counter_middleware import CounterMiddleware
@@ -48,10 +50,15 @@ async def start():
     
     # You need register middleware before handlers
     dp.message.middleware.register(CounterMiddleware())
-    dp.update.middleware.register(OfficeHoursMiddleware())
+    # Will work only in specific hours
+    #dp.update.middleware.register(OfficeHoursMiddleware())
     dp.message.register(get_start, Command(commands=["start"]))
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
+    dp.message.register(form.get_form, Command(commands="form"))
+    dp.message.register(form.get_name, StepsForm.GET_NAME)
+    dp.message.register(form.get_last_name, StepsForm.GET_LAST_NAME)
+    dp.message.register(form.get_age, StepsForm.GET_AGE)
     # F is magical filter used in aiogram3
     dp.message.register(get_photo, F.photo)
     dp.message.register(get_hello, F.text.lower() == "привет")
