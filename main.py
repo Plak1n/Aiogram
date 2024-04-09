@@ -18,6 +18,10 @@ from core.utils.callback_data import CallBackInfo
 from core.middlewares.counter_middleware import CounterMiddleware
 from core.middlewares.office_hours import OfficeHoursMiddleware
 from core.middlewares.db_middleware import DbSession
+from core.handlers import apshedule
+from datetime import datetime, timedelta
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
 
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
@@ -45,8 +49,19 @@ async def start():
                     "%(filename)s.%(funcName)s(%(lineno)d) - %(message)s")
 
     bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
-    pool_connect = create_pool()
-    dp.update.middleware.register(DbSession(pool_connect))
+    # A way to schedule apps
+    scheduler = AsyncIOScheduler(timezone="Europe/Minsk")
+    scheduler.add_job(apshedule.send_message_time, trigger='date', run_date=datetime.now()+timedelta(seconds=10),
+                      kwargs={'bot':bot})
+    scheduler.add_job(apshedule.send_message_crone, trigger='cron', hour=datetime.now().hour, 
+                      minute=datetime.now().minute+1,
+                      start_date =datetime.now(),
+                      kwargs={'bot':bot})
+    scheduler.add_job(apshedule.send_message_interval, trigger='interval', seconds=60,
+                      kwargs={'bot':bot})
+    scheduler.start()
+    #pool_connect = create_pool()
+    #dp.update.middleware.register(DbSession(pool_connect))
     
     # You need register middleware before handlers
     dp.message.middleware.register(CounterMiddleware())
