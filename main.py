@@ -50,16 +50,16 @@ async def start():
 
     bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
     # A way to schedule apps
-    scheduler = AsyncIOScheduler(timezone="Europe/Minsk")
-    scheduler.add_job(apshedule.send_message_time, trigger='date', run_date=datetime.now()+timedelta(seconds=10),
-                      kwargs={'bot':bot})
-    scheduler.add_job(apshedule.send_message_crone, trigger='cron', hour=datetime.now().hour, 
-                      minute=datetime.now().minute+1,
-                      start_date =datetime.now(),
-                      kwargs={'bot':bot})
-    scheduler.add_job(apshedule.send_message_interval, trigger='interval', seconds=60,
-                      kwargs={'bot':bot})
-    scheduler.start()
+    # scheduler = AsyncIOScheduler(timezone="Europe/Minsk")
+    # scheduler.add_job(apshedule.send_message_time, trigger='date', run_date=datetime.now()+timedelta(seconds=10),
+    #                   kwargs={'bot':bot})
+    # scheduler.add_job(apshedule.send_message_crone, trigger='cron', hour=datetime.now().hour, 
+    #                   minute=datetime.now().minute+1,
+    #                   start_date =datetime.now(),
+    #                   kwargs={'bot':bot})
+    # scheduler.add_job(apshedule.send_message_interval, trigger='interval', seconds=60,
+    #                   kwargs={'bot':bot})
+    # scheduler.start()
     #pool_connect = create_pool()
     #dp.update.middleware.register(DbSession(pool_connect))
     
