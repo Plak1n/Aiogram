@@ -4,7 +4,8 @@ import psycopg_pool
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
-from aiogram.enums import ContentType
+from aiogram.enums import ContentType, ParseMode
+from aiogram.client.default import DefaultBotProperties
 from core.settings import settings
 from core.handlers.basic import start_bot, stop_bot, get_start, get_photo, get_hello, get_location, get_inline, owner_messsage
 from core.handlers.contact import get_true_contact, get_fake_contact
@@ -48,7 +49,7 @@ async def start():
                     format="%(asctime)s - [%(levelname)s] - %(name)s - "
                     "%(filename)s.%(funcName)s(%(lineno)d) - %(message)s")
 
-    bot = Bot(token=settings.bots.bot_token)
+    bot = Bot(token=settings.bots.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     # A way to schedule apps
     # scheduler = AsyncIOScheduler(timezone="Europe/Minsk")
     # scheduler.add_job(apshedule.send_message_time, trigger='date', run_date=datetime.now()+timedelta(seconds=10),
