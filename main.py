@@ -48,7 +48,7 @@ async def start():
                     format="%(asctime)s - [%(levelname)s] - %(name)s - "
                     "%(filename)s.%(funcName)s(%(lineno)d) - %(message)s")
 
-    bot = Bot(token=settings.bots.bot_token, parse_mode="HTML")
+    bot = Bot(token=settings.bots.bot_token)
     # A way to schedule apps
     # scheduler = AsyncIOScheduler(timezone="Europe/Minsk")
     # scheduler.add_job(apshedule.send_message_time, trigger='date', run_date=datetime.now()+timedelta(seconds=10),
