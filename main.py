@@ -40,8 +40,9 @@ async def callback_query(call: CallbackQuery, bot: Bot, callback_data: CallBackI
     await call.answer()
 
 def create_pool():
-    return psycopg_pool.AsyncConnectionPool(f"host=127.0.0.1 port=5432 dbname=users_aiogram user=plak1n password=Danko560x9z "
-                                                  f"connect_timeout=60")
+    db = settings.database
+    return psycopg_pool.AsyncConnectionPool(f"host={db.host} port={db.port} dbname={db.dbname} "
+           f"user={db.user} password={db.password} connect_timeout=60")
 
 async def start():
     # init
@@ -61,8 +62,8 @@ async def start():
     # scheduler.add_job(apshedule.send_message_interval, trigger='interval', seconds=60,
     #                   kwargs={'bot':bot})
     # scheduler.start()
-    #pool_connect = create_pool()
-    #dp.update.middleware.register(DbSession(pool_connect))
+    pool_connect = create_pool()
+    dp.update.middleware.register(DbSession(pool_connect))
     
     # You need register middleware before handlers
     dp.message.middleware.register(CounterMiddleware())
